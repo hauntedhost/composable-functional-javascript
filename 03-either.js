@@ -23,7 +23,8 @@ const findColor = name => fromNullable(COLORS[name]);
 const color = findColor('green')
   .map(c => c.slice(1))
   .map(c => c.toUpperCase())
-  .fold(_e => 'No color!', c => c)
+  .fold(_ => 'No color!',
+        c => c);
 
 console.log(color);
 

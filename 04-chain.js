@@ -27,7 +27,8 @@ const tryCatch = f => {
 const getPort = (configFile = 'config.json') =>
   tryCatch(() => fs.readFileSync(configFile))
   .chain(c => tryCatch(() => JSON.parse(c)))
-  .fold(_e => 3000, c => c.port)
+  .fold(_ => 3000,
+        c => c.port);
 
 const result = getPort();
 console.log(result);
