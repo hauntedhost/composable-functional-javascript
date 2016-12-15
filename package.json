@@ -1,0 +1,24 @@
+{
+  "name": "composable-functional-javascript",
+  "version": "1.0.0",
+  "description": "personal code while watching composable functional javascript course on egghead.io",
+  "main": "01-box.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/somlor/composable-functional-javascript.git"
+  },
+  "author": "sean omlor",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/somlor/composable-functional-javascript/issues"
+  },
+  "homepage": "https://github.com/somlor/composable-functional-javascript#readme",
+  "dependencies": {
+    "immutable": "^3.8.1",
+    "immutable-ext": "^1.0.8",
+    "lodash": "^4.17.2"
+  }
+}
