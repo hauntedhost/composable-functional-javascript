@@ -1,5 +1,3 @@
-const { compose, concat, uniq } = require('lodash/fp');
-
 const Sum = x => ({
   x,
   concat: ({x: y}) => Sum(x + y),

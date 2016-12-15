@@ -1,4 +1,4 @@
-const { compose, concat, uniq } = require('lodash/fp');
+const { flow, concat, uniq } = require('lodash/fp');
 const { Map } = require('immutable-ext');
 
 // whenever we think of combining we can think of semigroups
@@ -23,7 +23,7 @@ const First = x => ({
 
 const Uniq = x => ({
   x,
-  concat: ({x: y}) => compose(Uniq, uniq, concat())(x, y), // ( ☼o☼)♡
+  concat: ({x: y}) => flow(concat(), uniq, Uniq)(x, y), // ( ☼o☼)♡
   inspect: _ => `Uniq(${x})`,
 });
 
