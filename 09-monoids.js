@@ -1,5 +1,5 @@
-const { Right, Left } = require('data.either');
 const { foldMap, List } = require('immutable-ext');
+const { flow } = require('lodash/fp');
 
 const Sum = x => ({
   x,
@@ -49,53 +49,79 @@ const Min = x => ({
 
 Min.empty = _ => Min(Infinity);
 
-// const Right = x => ({
-//   map: f => Right(f(x)),
-//   fold: (_f, g) => g(x),
-//   concat: o => o.fold(
-//     e => Left(e),
-//     r => Right(x.concat(r))
-//   ),
-//   inspect: () => `Right(${x})`,
-// });
-//
-// const Left = x => ({
-//   map: _f => Left(x),
-//   fold: (f, _g) => f(x),
-//   concat: _o => Left(x),
-//   inspect: () => `Left(${x})`,
-// });
+const Right = x => ({
+  map: f => Right(f(x)),
+  fold: (_f, g) => g(x),
+  concat: o => o.fold(
+    _e => Right(x),
+    y  => Right(x.concat(y))
+  ),
+  inspect: () => `Right(${x})`,
+  isRight: true,
+  isLeft: false,
+});
+
+const Left = x => ({
+  map: _f => Left(x),
+  fold: (f, _g) => f(x),
+  concat: o => o.fold(
+    _e => Left(x),
+    y  => o
+  ),
+  inspect: () => `Left(${x})`,
+  isRight: false,
+  isLeft: true,
+});
 
 const fromNullable = x => x != null ? Right(x) : Left(null);
 
-// const fromNullable = (x, nullValue) => ({
-//   map: f => x != null ? Right(f(x)) : Right(nullValue),
-// });
-
 const stats = List.of(
   {page: 'Home', views: 40},
-  {page: 'About', views: 10},
-  {page: 'Blog', views: 3}
+  {page: 'About', views: null},
+  {page: 'Blog', views: 5}
 );
 
-// const viewCount = stats
-//   .foldMap(x =>
-//     fromNullable(x.views, 0).map(Sum),
-//     Right(Sum(0)))
-//   .fold(_e => 'err', v => v);
-
-// ¯\_(ツ)_/¯
-// const viewCount = stats
-//   .foldMap(x =>
-//     fromNullable(x.views)
-//     .fold(_e => Right(0), v => Right(v))
-//     .map(Sum),
-//     Right(Sum(0)))
-//     .fold(_e => 'err', s => s);
-
 const viewCount = stats.foldMap(x =>
-  fromNullable(x.views).map(Sum), Right(Sum(0)));
-
-// TypeError: acc.concat is not a function
+  fromNullable(x.views).map(Sum), Right(Sum(0)))
+  .fold(_ => 'Error!', v => v);
 
 console.log(viewCount);
+
+const First = either => ({
+  fold: f => f(either),
+  concat: o => either.isLeft ? o : First(either),
+});
+
+First.empty = _ => First(Left());
+
+const find = (xs, f) =>
+  List(xs)
+  .foldMap(x => First(f(x) ? Right(x) : Left()), First.empty())
+  .fold(x => x)
+
+const match = find([3, 4, 4, 6, 7], x => x > 4);
+
+console.log(match);
+
+// └[?﹏?]┘
+const Fn = f => ({
+  fold: f,
+  concat: o => Fn(x => f(x).concat(o.fold(x)))
+});
+
+const hasVowels = x => !!x.match(/[aeiou]/ig);
+const isLongWord = x => x.length >= 5;
+
+const checkBoth = Fn(flow(hasVowels, All)).concat(Fn(flow(isLongWord, All)));
+
+const matches = ['gym', 'rhythms', 'gymnasium', 'bird', 'lilac'].filter(x =>
+  checkBoth.fold(x).x
+);
+
+console.log(matches);
+
+const Pair = (x, y) => ({
+  x,
+  y,
+  concat: ({x: x1, y: y1}) => Pair(x.concat(x1), y.concat(y1)),
+});
