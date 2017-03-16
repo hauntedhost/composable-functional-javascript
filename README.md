@@ -6,18 +6,18 @@ Personal code while watching [Composable Functional JavaScript](https://egghead.
 
 ### [Functors Definition](https://en.wikipedia.org/wiki/Functor#Definition):
 
-Where `fx` is a functor holding `x`.
+Where `Fx` is a functor holding `x`.
 
 #### composition:
 
 ```javascript
-fx.map(f).map(g) == fx.map(x => g(f(x)))
+Fx.map(f).map(g) === Fx.map(x => g(f(x)))
 ```
 
 #### identity:
 
 ```javascript
-fx.map(id) == id(fx)
+Fx.map(id) === id(Fx)
 ```
 
 ---
